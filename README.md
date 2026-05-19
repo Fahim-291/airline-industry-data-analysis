@@ -45,6 +45,7 @@ Using Python and R, the study explores relationships between ticket pricing and 
 ├── main.ipynb
 ├── Airline_Analysis.pdf
 ├── Airline_Analysis.docx
+├── Airline_Analysis.py
 ├── Resources/
 │   └── flight_data.csv
 ├── Images/
