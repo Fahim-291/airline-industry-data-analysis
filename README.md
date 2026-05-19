@@ -26,6 +26,19 @@ Using Python and R, the study explores relationships between ticket pricing and 
 
 ---
 
+## 👨‍🏫 Submitted To
+
+## Dr. Md. Siddikur Rahman
+### Academic Year 2023–2024
+
+---
+
+## 👨‍💻 Author
+# Fahim Islam
+## STAT-2205 — Programming with R and Python
+### Student ID: 12310048
+
+---
 ## 📂 Repository Structure
 
 ```bash
