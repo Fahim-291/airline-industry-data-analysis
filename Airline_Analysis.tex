@@ -1,0 +1,1782 @@
+% ============================================================
+%  Airline Industry Data Analysis — STAT-2205 | ID: 12310048
+%  LaTeX source — mirrors the formatting of Airline_Analysis_WithCode.docx
+% ============================================================
+\documentclass[12pt, a4paper]{report}
+\setlength{\headheight}{15pt}
+
+% ── Packages ────────────────────────────────────────────────
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm,
+            left=2.8cm, right=2.8cm]{geometry}
+%\usepackage{fontenc}
+%\usepackage{inputenc}
+%\usepackage[patches={}]{microtype}
+\usepackage{lmodern}
+\usepackage{amsmath}
+
+% Colours & graphics
+\usepackage[dvipsnames,svgnames,table]{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{colortbl}
+
+% Code listings
+\usepackage{listings}
+\usepackage{inconsolata}    % monospace font for code
+
+% Math
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Headers, TOC, hyperlinks
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage[hidelinks, colorlinks=true,
+            linkcolor=NavyBlue, urlcolor=NavyBlue,
+            citecolor=NavyBlue]{hyperref}
+\usepackage{bookmark}
+
+% Misc
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{mdframed}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings, skins, breakable}
+
+% ── Colour palette (matching docx theme) ────────────────────
+\definecolor{themeBlue}{HTML}{1F3864}      % dark navy
+\definecolor{themeAccent}{HTML}{2E75B6}    % medium blue
+\definecolor{themeLightBlue}{HTML}{D6E4F0} % cell fill
+\definecolor{themeGray}{HTML}{595959}      % body text
+\definecolor{themeHeaderBg}{HTML}{1F3864}  % table header
+\definecolor{themeRowAlt}{HTML}{EBF3FB}    % alternating row
+\definecolor{codeBg}{HTML}{F5F5F5}
+\definecolor{codeFrame}{HTML}{CCCCCC}
+\definecolor{pyKeyword}{HTML}{0000FF}
+\definecolor{pyString}{HTML}{BA2121}
+\definecolor{pyComment}{HTML}{408080}
+\definecolor{rKeyword}{HTML}{007020}
+\definecolor{rComment}{HTML}{60A0B0}
+
+% ── Section title styling ────────────────────────────────────
+\titleformat{\chapter}[block]
+  {\normalfont\LARGE\bfseries\color{themeBlue}}
+  {\thechapter.}{0.6em}{}
+  [\vspace{-0.3em}\color{themeAccent}\rule{\linewidth}{1.5pt}]
+
+\titleformat{\section}[block]
+  {\normalfont\large\bfseries\color{themeBlue}}
+  {\thesection}{0.5em}{}
+  [\color{themeAccent}\rule{\linewidth}{0.8pt}]
+
+\titleformat{\subsection}[block]
+  {\normalfont\normalsize\bfseries\color{themeAccent}}
+  {\thesubsection}{0.5em}{}
+
+\titlespacing*{\chapter}{0pt}{12pt}{10pt}
+\titlespacing*{\section}{0pt}{10pt}{6pt}
+\titlespacing*{\subsection}{0pt}{8pt}{4pt}
+
+% ── Page headers/footers ─────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{themeAccent}{\small\textit{Airline Data Analysis \textemdash{} STAT-2205}}}
+\fancyhead[R]{\textcolor{themeAccent}{\small\textit{ID: 12310048}}}
+\fancyfoot[C]{\textcolor{themeGray}{\small\thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\color{themeAccent}\hrule width\headwidth height\headrulewidth}
+
+% ── Table styling helper macros ──────────────────────────────
+\newcommand{\thead}[1]{\cellcolor{themeHeaderBg}\textcolor{white}{\textbf{#1}}}
+\newcommand{\talt}{\rowcolor{themeRowAlt}}
+\newcommand{\trow}{\rowcolor{white}}
+
+% ── Python code style ────────────────────────────────────────
+\lstdefinestyle{python}{
+  language=Python,
+  backgroundcolor=\color{codeBg},
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{pyKeyword}\bfseries,
+  stringstyle=\color{pyString},
+  commentstyle=\color{pyComment}\itshape,
+  numberstyle=\tiny\color{gray},
+  numbers=left,
+  stepnumber=1,
+  numbersep=6pt,
+  frame=single,
+  rulecolor=\color{codeFrame},
+  breaklines=true,
+  breakatwhitespace=false,
+  tabsize=4,
+  showstringspaces=false,
+  captionpos=b,
+  xleftmargin=1.5em,
+  framexleftmargin=1.5em,
+}
+
+% ── R code style ─────────────────────────────────────────────
+\lstdefinestyle{Rcode}{
+  language=R,
+  backgroundcolor=\color{codeBg},
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{rKeyword}\bfseries,
+  commentstyle=\color{rComment}\itshape,
+  stringstyle=\color{pyString},
+  numberstyle=\tiny\color{gray},
+  numbers=left,
+  stepnumber=1,
+  numbersep=6pt,
+  frame=single,
+  rulecolor=\color{codeFrame},
+  breaklines=true,
+  tabsize=2,
+  showstringspaces=false,
+  captionpos=b,
+  xleftmargin=1.5em,
+  framexleftmargin=1.5em,
+}
+
+% ── Interpretation box ───────────────────────────────────────
+\newenvironment{interpretation}{%
+  \begin{tcolorbox}[
+    enhanced, breakable,
+    colback=themeLightBlue, colframe=themeAccent,
+    title={\textbf{Interpretation}},
+    fonttitle=\color{white},
+    coltitle=white,
+    attach boxed title to top left={yshift=-2mm, xshift=4mm},
+    boxed title style={colback=themeAccent},
+    left=6pt, right=6pt, top=8pt, bottom=6pt
+  ]
+}{%
+  \end{tcolorbox}%
+}
+
+% ── Inline stat highlight ────────────────────────────────────
+\newcommand{\stat}[1]{\textbf{\textcolor{themeAccent}{#1}}}
+
+% ── Suppress chapter numbering for TOC chapters ──────────────
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+
+% ── Line spacing ─────────────────────────────────────────────
+\setstretch{1.15}
+
+% Font Required
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+
+% ============================================================
+\begin{document}
+
+% ── TITLE PAGE ───────────────────────────────────────────────
+\begin{titlepage}
+  \pagecolor{themeBlue}
+  \color{white}
+  \centering
+  \vspace*{2cm}
+
+  {\Huge\bfseries Airline Industry Data Analysis\par}
+  \vspace{0.4cm}
+  {\large\itshape Factors Influencing Coach Ticket Prices\par}
+  \vspace{1.5cm}
+  \color{themeAccent}
+  \rule{0.6\linewidth}{1pt}
+  \vspace{1cm}
+  \color{white}
+
+  \begin{tabular}{rl}
+    \textbf{Course}      & STAT-2205 — Programming with R and Python \\[4pt]
+    \textbf{Name}        & Fahim Islam \\[4pt]
+    \textbf{Student ID}  & 12310048 \\[4pt]
+    \textbf{Dataset}     & \texttt{flight\_data.csv} (129,780 observations) \\[4pt]
+    \textbf{Sample Size} & 10,000 rows (\texttt{random\_state / seed = 12310048}) \\[4pt]
+    \textbf{Language}    & Python \& R \\[4pt]
+    \textbf{Submitted to}& Dr.\ Md.\ Siddikur Rahman \\[4pt]
+    \textbf{Academic Year}& 2023--2024 \\
+  \end{tabular}
+
+  \vfill
+  \color{themeAccent}
+  \rule{0.6\linewidth}{1pt}
+  \vspace{0.5cm}\\
+  \color{white}
+  {\small STAT-2205 \textbar{} Airline Analysis \textbar{} ID: 12310048}
+\end{titlepage}
+\pagecolor{white}\color{black}
+
+% ── TABLE OF CONTENTS ────────────────────────────────────────
+\tableofcontents
+\newpage
+
+% ============================================================
+\chapter{Introduction}
+% ============================================================
+
+This report presents a comprehensive statistical analysis of \stat{129,780} airline flight records. The objective is to reveal the key factors influencing coach ticket prices. A reproducible sample of \stat{10,000} observations is drawn using Student ID \texttt{12310048} as the random seed.
+
+\section{Dataset Variables}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{>{\bfseries}l l X}
+\thead{Variable} & \thead{Type} & \thead{Description} \\
+\talt miles               & Numeric     & Distance flown (miles) \\
+\trow passengers          & Numeric     & Number of passengers on board \\
+\talt delay               & Numeric     & Takeoff delay (minutes) \\
+\trow inflight\_meal      & Categorical & Meal included? (Yes / No) \\
+\talt inflight\_entertainment & Categorical & Free entertainment? (Yes / No) \\
+\trow inflight\_wifi      & Categorical & Complimentary WiFi? (Yes / No) \\
+\talt day\_of\_week       & Categorical & Day of the week \\
+\trow redeye              & Categorical & Overnight flight? (Yes / No) \\
+\talt weekend             & Categorical & Weekend flight? (Yes / No) \\
+\trow coach\_price        & Numeric     & Average coach ticket price (\$) \\
+\talt firstclass\_price   & Numeric     & Average first-class price (\$) \\
+\trow hours               & Numeric     & Flight duration (hours) \\
+\end{tabularx}
+\caption{Dataset variables, types, and descriptions}
+\end{table}
+
+\section{Data Loading \& Sampling}
+
+\begin{lstlisting}[style=python, caption={Python — Load dataset and draw 10{,}000-row reproducible sample}]
+import pandas as pd
+
+df_full = pd.read_csv("flight_data.csv")
+df = df_full.sample(n=10_000, random_state=12310048).reset_index(drop=True)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Load dataset and draw 10{,}000-row reproducible sample}]
+df_full <- read.csv("flight_data.csv", stringsAsFactors = FALSE)
+names(df_full)[1] <- "miles"
+
+set.seed(12310048)
+idx <- sample(nrow(df_full), 10000)
+df  <- df_full[idx, ]
+\end{lstlisting}
+
+% ============================================================
+\chapter{Q1 — Coach Ticket Price Distribution}
+% ============================================================
+
+\textit{What do coach ticket prices look like? What are the high and low values? What would be considered the average? Does \$500 seem like a good price for a coach ticket?}
+
+\section{Key Statistics}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lc}
+\thead{Statistic} & \thead{Value} \\
+\talt Minimum             & \$84.50 \\
+\trow Maximum             & \$565.21 \\
+\talt Mean                & \$376.30 \\
+\trow Median              & \$380.50 \\
+\talt Standard Deviation  & \$66.65 \\
+\trow 25th Percentile (Q1) & \$332.18 \\
+\talt 75th Percentile (Q3) & \$425.40 \\
+\trow Skewness            & $-0.3416$ \\
+\talt Kurtosis            & $-0.0865$ \\
+\trow Flights above \$500 & 1.7\% \\
+\end{tabular}
+\caption{Coach price descriptive statistics ($n = 10{,}000$)}
+\end{table}
+
+\section{Code}
+
+\begin{lstlisting}[style=python, caption={Python — Summary statistics and visualisation for coach price}]
+cp = df["coach_price"]
+
+# Summary statistics
+print(cp.describe())
+print(f"Skewness : {cp.skew():.4f}")
+print(f"Kurtosis : {cp.kurtosis():.4f}")
+pct = (cp > 500).mean() * 100
+print(f"Above $500 : {pct:.1f}%")
+
+# Histogram + Boxplot + KDE + ECDF (2x2 grid)
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+axes[0,0].hist(cp, bins=50, color="steelblue", edgecolor="white", alpha=0.85)
+axes[0,0].axvline(cp.mean(),   color="red",    linestyle="--", label=f"Mean ${cp.mean():.0f}")
+axes[0,0].axvline(cp.median(), color="orange", linestyle="--", label=f"Median ${cp.median():.0f}")
+axes[0,0].axvline(500,         color="green",  linestyle="--", label="$500 mark")
+axes[0,0].set_title("Q1 - Histogram of Coach Prices")
+axes[0,0].legend()
+
+axes[0,1].boxplot(cp, vert=True, patch_artist=True,
+    boxprops=dict(facecolor="steelblue"),
+    medianprops=dict(color="orange", linewidth=2))
+axes[0,1].axhline(500, color="green", linestyle="--", label="$500 mark")
+axes[0,1].set_title("Q1 - Boxplot of Coach Prices")
+axes[0,1].legend()
+
+cp.plot.kde(ax=axes[1,0], color="steelblue", linewidth=2)
+axes[1,0].set_title("Q1 - KDE Density of Coach Prices")
+
+sorted_cp = np.sort(cp)
+ecdf_y    = np.arange(1, len(sorted_cp)+1) / len(sorted_cp)
+axes[1,1].plot(sorted_cp, ecdf_y, color="steelblue", linewidth=2)
+axes[1,1].axvline(500, color="green", linestyle="--", label=f"$500")
+axes[1,1].set_title("Q1 - ECDF of Coach Prices")
+axes[1,1].legend()
+
+plt.tight_layout(); plt.savefig("q1_coach_price.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Summary statistics and visualisation for coach price}]
+cp <- df$coach_price
+
+# Summary statistics
+summary(cp)
+sd(cp)
+library(moments)
+skewness(cp); kurtosis(cp)
+mean(cp > 500) * 100    # % above $500
+
+# Visualisations
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+
+hist(cp, breaks=50, col="steelblue", border="white",
+     main="Q1 - Histogram of Coach Prices", xlab="Coach Price ($)")
+abline(v=mean(cp),   col="red",    lty=2, lwd=2)
+abline(v=median(cp), col="orange", lty=2, lwd=2)
+abline(v=500,        col="green",  lty=2, lwd=2)
+legend("topleft", legend=c("Mean","Median","$500"),
+       col=c("red","orange","green"), lty=2, cex=0.8)
+
+boxplot(cp, col="steelblue", main="Q1 - Boxplot of Coach Prices",
+        ylab="Coach Price ($)")
+abline(h=500, col="green", lty=2, lwd=2)
+
+plot(density(cp), col="steelblue", lwd=2,
+     main="Q1 - KDE of Coach Prices", xlab="Coach Price ($)")
+
+sorted_cp <- sort(cp)
+ecdf_y    <- seq_along(sorted_cp) / length(sorted_cp)
+plot(sorted_cp, ecdf_y, type="l", col="steelblue", lwd=2,
+     main="Q1 - ECDF of Coach Prices",
+     xlab="Coach Price ($)", ylab="Cumulative Proportion")
+abline(v=500, col="green", lty=2, lwd=2)
+par(mfrow = c(1, 1))
+\end{lstlisting}
+
+\section{Visualisations}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{q1_coach_price.png}
+  \caption{Q1 — Coach Price: Histogram, Boxplot, KDE, and ECDF}
+\end{figure}
+
+\section{Interpretation}
+
+\begin{interpretation}
+The distribution is approximately symmetric (mean $\approx$ median $\approx$ \$376--\$381). The IQR spans \$332--\$425. Only \stat{1.7\%} of tickets exceed \$500, placing it in the top 2\% of all fares.
+
+\textbf{Conclusion:} \$500 is an expensive coach ticket, well above the market average. A typical traveller would expect to pay \$332--\$425 for a coach seat.
+\end{interpretation}
+
+% ============================================================
+\chapter{Q2 — Coach Prices for 8-Hour Flights}
+% ============================================================
+
+\textit{What are the high, low, and average prices for 8-hour-long flights? Does a \$500 ticket seem more reasonable than before?}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcc}
+\thead{Statistic} & \thead{All Flights} & \thead{8-Hour Flights} \\
+\talt Count       & 10,000  & 182 \\
+\trow Min Price   & \$84.50  & \$222.98 \\
+\talt Max Price   & \$565.21 & \$556.38 \\
+\trow Mean Price  & \$376.30 & \$432.18 \\
+\talt Median      & \$380.50 & \$423.93 \\
+\trow Std Dev     & \$66.65  & \$58.87 \\
+\talt Above \$500 & 1.7\%    & 14.8\% \\
+\end{tabular}
+\caption{Coach price: all flights vs.\ 8-hour flights}
+\end{table}
+
+\section{Code}
+
+\begin{lstlisting}[style=python, caption={Python — Filter 8-hour flights and compare price distributions}]
+df8 = df[df["hours"] == 8]["coach_price"]
+print(df8.describe())
+pct = (df8 > 500).mean() * 100
+print(f"Above $500 : {pct:.1f}%")
+
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+# Histogram: All vs 8-hr
+axes[0,0].hist(cp,  bins=40, color="steelblue", alpha=0.6, label="All flights")
+axes[0,0].hist(df8, bins=20, color="darkorange", alpha=0.8, label="8-hour flights")
+axes[0,0].axvline(500, color="green", linestyle="--", label="$500 mark")
+axes[0,0].set_title("Q2 - All vs 8-Hour Flights"); axes[0,0].legend()
+
+# Side-by-side boxplot
+bp = axes[0,1].boxplot([cp, df8], labels=["All Flights","8-Hour Flights"],
+                       patch_artist=True)
+for patch, c in zip(bp["boxes"], ["steelblue","darkorange"]):
+    patch.set_facecolor(c); patch.set_alpha(0.75)
+axes[0,1].axhline(500, color="green", linestyle="--"); axes[0,1].set_ylabel("Coach Price ($)")
+
+# Violin by hour
+hours_order = sorted(df["hours"].unique())
+prices_by_hour = [df[df["hours"]==h]["coach_price"].values for h in hours_order]
+axes[1,0].violinplot(prices_by_hour, positions=hours_order, showmedians=True)
+axes[1,0].set_title("Q2 - Price by Duration (Violin)")
+
+# Bar: mean price per hour
+mean_ph = df.groupby("hours")["coach_price"].mean()
+axes[1,1].bar(mean_ph.index, mean_ph.values, color="steelblue", edgecolor="white")
+axes[1,1].axhline(cp.mean(), color="red",   linestyle="--", label="Overall mean")
+axes[1,1].axhline(500,       color="green", linestyle="--", label="$500")
+axes[1,1].legend(); axes[1,1].set_title("Q2 - Mean Price by Hour")
+plt.tight_layout(); plt.savefig("q2_8hour_prices.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Filter 8-hour flights and compare price distributions}]
+df8 <- df[df$hours == 8, "coach_price"]
+summary(df8)
+mean(df8 > 500) * 100     # % above $500
+
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+
+# Histogram: all vs 8-hr
+hist(cp,  breaks=40, col=rgb(0.27,0.51,0.71,0.6),
+     main="Q2 - All vs 8-Hour", xlab="Coach Price ($)")
+hist(df8, breaks=20, col=rgb(1,0.55,0,0.8), add=TRUE)
+legend("topleft", c("All","8-hour"), fill=c("steelblue","darkorange"))
+
+# Side-by-side boxplot
+boxplot(cp, df8, names=c("All Flights","8-Hour"), col=c("steelblue","darkorange"),
+        main="Q2 - Comparison Boxplot", ylab="Coach Price ($)")
+abline(h=500, col="green", lty=2, lwd=2)
+
+# Bar: mean price per hour
+avg_ph <- tapply(df$coach_price, df$hours, mean)
+barplot(avg_ph, col="steelblue", xlab="Hours", ylab="Avg Coach Price ($)",
+        main="Q2 - Mean Coach Price by Duration")
+abline(h=mean(cp), col="red", lty=2); abline(h=500, col="green", lty=2)
+
+# Violin via vioplot
+if (!require("vioplot")) install.packages("vioplot")
+library(vioplot)
+vioplot(cp, df8, names=c("All","8-hr"), col=c("steelblue","darkorange"),
+        main="Q2 - Violin: All vs 8-Hour")
+abline(h=500, col="green", lty=2)
+par(mfrow = c(1, 1))
+\end{lstlisting}
+
+\section{Visualisations}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q2_8hour_prices.png}
+  \caption{Q2 — 8-Hour Flight Prices: Histogram, Boxplot, Violin, and Mean-by-Hour}
+\end{figure}
+
+\section{Interpretation}
+
+\begin{interpretation}
+8-hour flights average \stat{\$432.18}, roughly \$56 above the overall mean. \stat{14.8\%} of 8-hour tickets exceed \$500.
+
+\textbf{Conclusion:} \$500 is more justifiable for long-haul travel but remains above average even for the longest flights.
+\end{interpretation}
+
+% ============================================================
+\chapter{Q3 — Flight Delay Distribution}
+% ============================================================
+
+\textit{How are flight delay times distributed? How often are there significant delays? What kinds of delays are typical?}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lc}
+\thead{Metric} & \thead{Value} \\
+\talt Mean Delay                   & 13.61 min \\
+\trow Median Delay                 & 10.00 min \\
+\talt Standard Deviation           & 47.76 min \\
+\trow Maximum Delay                & 1,524 min \\
+\talt No Delay (0 min)             & 7.6\% \\
+\trow Flights delayed $>$ 15 min   & 17.1\% (connection risk) \\
+\talt Flights delayed $>$ 60 min   & 0.1\% (severe) \\
+\end{tabular}
+\caption{Flight delay distribution statistics}
+\end{table}
+
+\section{Code}
+
+\begin{lstlisting}[style=python, caption={Python — Delay distribution, thresholds, and visualisations}]
+delay = df["delay"]
+
+print(f"Mean   : {delay.mean():.2f} min")
+print(f"Median : {delay.median():.2f} min")
+print(f"Std    : {delay.std():.2f} min")
+print(f"Max    : {delay.max():.0f} min")
+print(f"> 15 min : {(delay>15).mean()*100:.1f}%  (connection risk)")
+print(f"> 60 min : {(delay>60).mean()*100:.1f}%  (severe)")
+
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+# Histogram (capped at 120 min)
+delay_cap = delay[delay <= 120]
+axes[0,0].hist(delay_cap, bins=50, color="tomato", edgecolor="white")
+axes[0,0].axvline(15, color="orange", linestyle="--", label="15 min (connection)")
+axes[0,0].axvline(60, color="darkred",linestyle="--", label="60 min (severe)")
+axes[0,0].set_title("Q3 - Delay Histogram (<=120 min)"); axes[0,0].legend()
+
+# Boxplot
+axes[0,1].boxplot(delay, patch_artist=True, boxprops=dict(facecolor="tomato"),
+                  medianprops=dict(color="darkred", linewidth=2))
+axes[0,1].set_title("Q3 - Boxplot of Delay Times")
+
+# ECDF
+sorted_d = np.sort(delay); ecdf_d = np.arange(1,len(sorted_d)+1)/len(sorted_d)
+axes[1,0].plot(sorted_d, ecdf_d, color="tomato", linewidth=2)
+axes[1,0].axvline(15, color="orange",  linestyle="--", label="15 min")
+axes[1,0].axvline(60, color="darkred", linestyle="--", label="60 min")
+axes[1,0].set_xlim(0,200); axes[1,0].set_title("Q3 - ECDF"); axes[1,0].legend()
+
+# Delay-category bar
+cats  = {"No delay":( delay==0).sum(), "1-15 min":((delay>0)&(delay<=15)).sum(),
+         "16-60 min":((delay>15)&(delay<=60)).sum(), ">60 min":(delay>60).sum()}
+axes[1,1].bar(cats.keys(), cats.values(), color=["seagreen","steelblue","orange","darkred"])
+axes[1,1].set_title("Q3 - Flights by Delay Category")
+plt.tight_layout(); plt.savefig("q3_delays.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Delay distribution and visualisations}]
+delay <- df$delay
+
+mean(delay); median(delay); sd(delay); max(delay)
+mean(delay > 15) * 100    # connection risk
+mean(delay > 60) * 100    # severe
+
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+
+# Histogram
+hist(delay[delay <= 120], breaks=50, col="tomato", border="white",
+     main="Q3 - Delay Histogram (<=120 min)", xlab="Delay (minutes)")
+abline(v=15, col="orange",  lty=2, lwd=2)
+abline(v=60, col="darkred", lty=2, lwd=2)
+
+# Boxplot
+boxplot(delay, col="tomato", main="Q3 - Boxplot of Delays", ylab="Delay (min)")
+
+# ECDF
+plot(ecdf(delay), xlim=c(0,200), col="tomato", lwd=2,
+     main="Q3 - ECDF of Delays", xlab="Delay (min)")
+abline(v=c(15,60), col=c("orange","darkred"), lty=2, lwd=2)
+
+# Category bar
+cats  <- c("No delay" = sum(delay==0),
+           "1-15 min" = sum(delay>0  & delay<=15),
+           "16-60 min"= sum(delay>15 & delay<=60),
+           ">60 min"  = sum(delay>60))
+barplot(cats, col=c("seagreen","steelblue","orange","darkred"),
+        main="Q3 - Flights by Delay Category", ylab="Count")
+par(mfrow = c(1, 1))
+\end{lstlisting}
+
+\section{Visualisations}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q3_delays.png}
+  \caption{Q3 — Flight Delay Distribution: Histogram, Boxplot, ECDF, and Category Bar}
+\end{figure}
+
+\section{Interpretation}
+
+\begin{interpretation}
+The delay distribution is strongly right-skewed. Most flights experience little to no delay (median = 10 min). However, \stat{17.1\%} of flights exceed the 15-minute connection-risk threshold. Severe delays exceeding 60 minutes affect only \stat{0.1\%} of flights but can have extreme magnitudes (max = 1,524 min).
+
+\textbf{Conclusion:} Typical delays are small and manageable; connection windows under 15 minutes carry meaningful risk.
+\end{interpretation}
+
+% ============================================================
+\chapter{Q4 — Correlation: Coach Price vs.\ Predictors}
+% ============================================================
+
+\textit{How does the coach price correlate with flight distance, passengers, delay, and flight duration?}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccc}
+\thead{Predictor} & \thead{Pearson r} & \thead{Direction} & \thead{p-value} & \thead{Significant?} \\
+\talt miles      & 0.3454  & Positive & $< 0.001$ & Yes \\
+\trow passengers & 0.1529  & Positive & $< 0.001$ & Yes \\
+\talt delay      & $-0.0181$ & Negative & 0.0707  & No \\
+\trow hours      & 0.3425  & Positive & $< 0.001$ & Yes \\
+\end{tabular}
+\caption{Pearson correlations between coach price and numeric predictors}
+\end{table}
+
+\section{Code}
+
+\begin{lstlisting}[style=python, caption={Python — Pearson correlation tests and scatter plots}]
+from scipy import stats
+import numpy as np
+
+numeric_vars = ["miles", "passengers", "delay", "hours"]
+for v in numeric_vars:
+    r, p = stats.pearsonr(df[v], df["coach_price"])
+    print(f"  {v:<12}: r={r:+.4f}  p={p:.4f}  {'sig' if p<0.05 else 'n.s.'}")
+
+fig, axes = plt.subplots(2, 3, figsize=(18, 10))
+colors = ["steelblue","darkorange","tomato","seagreen"]
+
+for ax, v, c in zip(axes.flat[:4], numeric_vars, colors):
+    ax.scatter(df[v], df["coach_price"], alpha=0.1, s=5, color=c)
+    slope, intercept = np.polyfit(df[v], df["coach_price"], 1)
+    x = np.linspace(df[v].min(), df[v].max(), 100)
+    ax.plot(x, slope*x + intercept, color="black", linewidth=2)
+    r, _ = stats.pearsonr(df[v], df["coach_price"])
+    ax.set_title(f"Coach Price vs {v.capitalize()} (r={r:+.3f})")
+
+# Correlation bar chart
+r_vals = [stats.pearsonr(df[v], df["coach_price"])[0] for v in numeric_vars]
+axes[1,1].barh(numeric_vars, r_vals,
+               color=["steelblue" if r>=0 else "tomato" for r in r_vals])
+axes[1,1].set_title("Pearson r with Coach Price")
+
+# Miles vs Hours coloured by coach price
+sc = axes[1,2].scatter(df["miles"], df["hours"], c=df["coach_price"],
+                       cmap="coolwarm", alpha=0.3, s=5)
+plt.colorbar(sc, ax=axes[1,2], label="Coach Price ($)")
+plt.tight_layout(); plt.savefig("q4_correlations.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Pearson correlation tests and scatter plots}]
+for (v in c("miles","passengers","delay","hours")) {
+  ct <- cor.test(df[[v]], df$coach_price)
+  cat(v, round(ct$estimate,4), round(ct$p.value,4), "\n")
+}
+
+par(mfrow = c(2, 3), mar = c(4, 4, 3, 1))
+colors <- c("steelblue","darkorange","tomato","seagreen")
+for (i in seq_along(c("miles","passengers","delay","hours"))) {
+  v <- c("miles","passengers","delay","hours")[i]
+  plot(df[[v]], df$coach_price, pch=16, cex=0.3, col=colors[i],
+       xlab=v, ylab="Coach Price ($)",
+       main=paste0("Coach Price vs ", v))
+  abline(lm(coach_price ~ df[[v]], data=df), col="black", lwd=2)
+}
+
+# Correlation bar
+r_vals <- sapply(c("miles","passengers","delay","hours"),
+                 function(v) cor(df[[v]], df$coach_price))
+barplot(r_vals, col=ifelse(r_vals>=0,"steelblue","tomato"),
+        main="Pearson r with Coach Price", ylab="Pearson r")
+par(mfrow = c(1, 1))
+\end{lstlisting}
+
+\section{Visualisations}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q4_correlations.png}
+  \caption{Q4 — Scatter plots, correlation bar chart, and miles vs.\ hours coloured by coach price}
+\end{figure}
+
+\section{Interpretation}
+
+\begin{interpretation}
+\textbf{Miles} ($r = 0.345$) and \textbf{hours} ($r = 0.343$) are the strongest positive predictors of coach price. \textbf{Passengers} show a weaker but significant positive correlation ($r = 0.153$). \textbf{Delay} is not a statistically significant pricing factor ($p = 0.071$).
+
+\textbf{Conclusion:} Route distance and flight duration are the primary drivers of coach price among continuous predictors.
+\end{interpretation}
+
+% ============================================================
+\chapter{Q5 — Coach vs.\ First-Class Price Relationship}
+% ============================================================
+
+\textit{What is the relationship between coach and first-class prices? Do flights with higher coach prices always have higher first-class prices?}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lc}
+\thead{Metric} & \thead{Value} \\
+\talt Pearson r                   & 0.7555 \\
+\trow Average FC / Coach ratio    & 3.93$\times$ \\
+\talt Average coach price         & \$376.30 \\
+\trow Average first-class price   & \$1,451.91 \\
+\talt p-value                     & $< 0.001$ \\
+\end{tabular}
+\caption{Coach vs.\ first-class relationship metrics}
+\end{table}
+
+\section{Code}
+
+\begin{lstlisting}[style=python, caption={Python — Correlation test and coach vs.\ first-class plots}]
+r5, p5 = stats.pearsonr(df["coach_price"], df["firstclass_price"])
+ratio  = (df["firstclass_price"] / df["coach_price"]).mean()
+print(f"r={r5:.4f}  p={p5:.2e}  Ratio: {ratio:.2f}x")
+
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+# Scatter + regression
+slope, intercept = np.polyfit(df["coach_price"], df["firstclass_price"], 1)
+axes[0,0].scatter(df["coach_price"], df["firstclass_price"],
+                  alpha=0.12, s=5, color="purple")
+x = np.linspace(df["coach_price"].min(), df["coach_price"].max(), 200)
+axes[0,0].plot(x, slope*x+intercept, color="black", linewidth=2)
+axes[0,0].set_title(f"Q5 - Coach vs First-Class (r={r5:.3f})")
+
+# Hexbin
+hb = axes[0,1].hexbin(df["coach_price"], df["firstclass_price"],
+                       gridsize=40, cmap="Purples", mincnt=1)
+plt.colorbar(hb, ax=axes[0,1])
+axes[0,1].set_title("Q5 - Hexbin Density")
+
+# Ratio histogram
+price_ratio = df["firstclass_price"] / df["coach_price"]
+axes[1,0].hist(price_ratio, bins=40, color="mediumpurple", edgecolor="white")
+axes[1,0].axvline(ratio, color="red", linestyle="--", label=f"Mean {ratio:.2f}x")
+axes[1,0].set_title("Q5 - FC/Coach Price Ratio"); axes[1,0].legend()
+
+# Average price bar
+bars = axes[1,1].bar(["Coach","First-Class"],
+                     [df["coach_price"].mean(), df["firstclass_price"].mean()],
+                     color=["steelblue","mediumpurple"], width=0.5)
+for bar, val in zip(bars, [df["coach_price"].mean(), df["firstclass_price"].mean()]):
+    axes[1,1].text(bar.get_x()+bar.get_width()/2, val+20,
+                   f"${val:,.0f}", ha="center", fontweight="bold")
+axes[1,1].set_title("Q5 - Average Prices")
+plt.tight_layout(); plt.savefig("q5_coach_vs_first.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Correlation test and coach vs.\ first-class plots}]
+ct5   <- cor.test(df$coach_price, df$firstclass_price)
+ratio <- mean(df$firstclass_price / df$coach_price)
+cat("r =", round(ct5$estimate,4), "  p =", ct5$p.value)
+cat("Ratio:", round(ratio,2), "x")
+
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+
+plot(df$coach_price, df$firstclass_price, pch=16, cex=0.3, col="purple",
+     xlab="Coach Price ($)", ylab="First-Class Price ($)",
+     main=paste0("Q5 - Coach vs First-Class (r=",round(ct5$estimate,3),")"))
+abline(lm(firstclass_price ~ coach_price, data=df), col="black", lwd=2)
+
+price_ratio <- df$firstclass_price / df$coach_price
+hist(price_ratio, breaks=40, col="mediumpurple", border="white",
+     main="Q5 - FC/Coach Ratio", xlab="Price Ratio")
+abline(v=ratio, col="red", lty=2, lwd=2)
+
+barplot(c(mean(df$coach_price), mean(df$firstclass_price)),
+        names.arg=c("Coach","First-Class"),
+        col=c("steelblue","mediumpurple"),
+        main="Q5 - Average Prices", ylab="Avg Price ($)")
+
+boxplot(df$coach_price, df$firstclass_price,
+        names=c("Coach","First-Class"), col=c("steelblue","mediumpurple"),
+        main="Q5 - Price Comparison Boxplot", ylab="Price ($)")
+par(mfrow = c(1, 1))
+\end{lstlisting}
+
+\section{Visualisations}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q5_coach_vs_first.png}
+  \caption{Q5 — Coach vs.\ First-Class: Scatter, Hexbin, Ratio Histogram, and Average Bar}
+\end{figure}
+
+\section{Interpretation}
+
+\begin{interpretation}
+There is a \textbf{strong positive} and statistically significant relationship between coach and first-class prices ($r = 0.756$, $p < 0.001$). Higher coach prices generally predict higher first-class prices. The relationship is not perfectly linear, indicating other factors also influence first-class pricing. On average, first-class tickets cost \stat{3.93$\times$} more than coach tickets.
+\end{interpretation}
+
+% ============================================================
+\chapter{Q6 — In-Flight Features and Coach Price}
+% ============================================================
+
+\textit{What is the relationship between coach prices and in-flight features? Which features are associated with the highest increase in price?}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccc}
+\thead{Feature} & \thead{With Feature} & \thead{Without} & \thead{Premium} & \thead{p-value} \\
+\talt Inflight Meal          & \$389.75 & \$370.51 & +\$19.24 & $<0.001$ \\
+\trow Entertainment          & \$389.34 & \$322.30 & +\$67.04 & $<0.001$ \\
+\talt WiFi                   & \$382.81 & \$314.79 & +\$68.02 & $<0.001$ \\
+\end{tabular}
+\caption{Coach price premiums by in-flight feature}
+\end{table}
+
+\section{Code}
+
+\begin{lstlisting}[style=python, caption={Python — Independent t-tests for each in-flight feature}]
+feats = ["inflight_meal", "inflight_entertainment", "inflight_wifi"]
+feat_results = {}
+for f in feats:
+    yes = df[df[f]=="Yes"]["coach_price"]
+    no  = df[df[f]=="No" ]["coach_price"]
+    t, p = stats.ttest_ind(yes, no)
+    feat_results[f] = {"yes":yes.mean(),"no":no.mean(),"diff":yes.mean()-no.mean(),"p":p}
+    print(f"{f}: Yes=${yes.mean():.2f}  No=${no.mean():.2f}  +${yes.mean()-no.mean():.2f}  p={p:.4f}")
+
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+# Grouped boxplots
+# ... (see full code in Airline_Analysis_Enhanced.py)
+
+# Price premium bar
+short = ["Meal","Entertainment","WiFi"]
+diffs = [feat_results[f]["diff"] for f in feats]
+axes[0,1].bar(short, diffs, color=["steelblue","darkorange","seagreen"])
+for i,d in enumerate(diffs):
+    axes[0,1].text(i, d+0.5, f"+${d:.2f}", ha="center", fontweight="bold")
+axes[0,1].set_title("Q6 - Price Premium per Feature")
+
+# Grouped bar: Yes vs No
+x = np.arange(len(short)); w = 0.35
+axes[1,0].bar(x-w/2,[feat_results[f]["yes"] for f in feats],w,label="With",color="steelblue")
+axes[1,0].bar(x+w/2,[feat_results[f]["no"]  for f in feats],w,label="Without",color="lightsteelblue")
+axes[1,0].set_xticks(x); axes[1,0].set_xticklabels(short); axes[1,0].legend()
+
+# Violin for WiFi
+vp = axes[1,1].violinplot([df[df["inflight_wifi"]=="Yes"]["coach_price"].values,
+                            df[df["inflight_wifi"]=="No" ]["coach_price"].values],
+                           positions=[1,2], showmedians=True)
+axes[1,1].set_xticks([1,2]); axes[1,1].set_xticklabels(["WiFi: Yes","WiFi: No"])
+plt.tight_layout(); plt.savefig("q6_inflight_features.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Independent t-tests for each in-flight feature}]
+feats <- c("inflight_meal","inflight_entertainment","inflight_wifi")
+for (f in feats) {
+  g1 <- df[df[[f]]=="Yes","coach_price"]
+  g2 <- df[df[[f]]=="No", "coach_price"]
+  tt <- t.test(g1, g2)
+  cat(f, round(mean(g1)-mean(g2),2), round(tt$p.value,4), "\n")
+}
+
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+
+# Boxplot by feature
+boxplot(coach_price ~ inflight_meal,          data=df,
+        col=c("steelblue","lightsteelblue"), main="Price by Meal")
+boxplot(coach_price ~ inflight_entertainment, data=df,
+        col=c("darkorange","moccasin"),      main="Price by Entertainment")
+boxplot(coach_price ~ inflight_wifi,          data=df,
+        col=c("seagreen","lightgreen"),      main="Price by WiFi")
+
+# Premium bar
+diffs <- c(
+  Meal          = mean(df[df$inflight_meal=="Yes","coach_price"]) -
+                  mean(df[df$inflight_meal=="No", "coach_price"]),
+  Entertainment = mean(df[df$inflight_entertainment=="Yes","coach_price"]) -
+                  mean(df[df$inflight_entertainment=="No", "coach_price"]),
+  WiFi          = mean(df[df$inflight_wifi=="Yes","coach_price"]) -
+                  mean(df[df$inflight_wifi=="No", "coach_price"]))
+barplot(diffs, col=c("steelblue","darkorange","seagreen"),
+        main="Price Premium per Feature", ylab="Price Difference ($)")
+par(mfrow = c(1, 1))
+\end{lstlisting}
+
+\section{Visualisations}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q6_inflight_features.png}
+  \caption{Q6 — In-Flight Features: Boxplots, Price Premium Bar, Grouped Bar, and WiFi Violin}
+\end{figure}
+
+\section{Interpretation}
+
+\begin{interpretation}
+All three in-flight services are associated with \textbf{significantly higher} coach prices. \stat{WiFi (+\$68.02)} and \stat{Entertainment (+\$67.04)} carry the largest premiums; Meal adds a smaller but still significant \stat{+\$19.24}.
+
+\textbf{Conclusion:} Premium cabin amenities are strongly linked to pricing strategy. WiFi and entertainment represent the highest pricing leverage for airlines.
+\end{interpretation}
+
+% ============================================================
+\chapter{Q7 — Passengers vs.\ Flight Duration}
+% ============================================================
+
+\textit{How does the number of passengers change in relation to the length of flights?}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{cc}
+\thead{Hours} & \thead{Avg.\ Passengers} \\
+\talt 1 & 208.2 \\
+\trow 2 & 207.7 \\
+\talt 3 & 207.6 \\
+\trow 4 & 207.5 \\
+\talt 5 & 207.1 \\
+\trow 6 & 208.1 \\
+\talt 7 & 207.9 \\
+\trow 8 & 207.6 \\
+\talt Pearson $r$ & $-0.011$ ($p = 0.273$, not significant) \\
+\end{tabular}
+\caption{Average passengers by flight duration}
+\end{table}
+
+\section{Code}
+
+\begin{lstlisting}[style=python, caption={Python — Passenger vs.\ duration correlation and visualisations}]
+r7, p7 = stats.pearsonr(df["hours"], df["passengers"])
+print(f"r={r7:.4f}  p={p7:.4f}")
+
+avg_pax = df.groupby("hours")["passengers"].mean()
+print(avg_pax)
+
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+axes[0,0].scatter(df["hours"], df["passengers"], alpha=0.1, s=5, color="teal")
+slope7,b7 = np.polyfit(df["hours"], df["passengers"], 1)
+x7 = np.linspace(df["hours"].min(), df["hours"].max(), 100)
+axes[0,0].plot(x7, slope7*x7+b7, color="black", linewidth=2, label=f"r={r7:.3f}")
+axes[0,0].set_title("Q7 - Passengers vs Hours"); axes[0,0].legend()
+
+avg_pax.plot(kind="bar", ax=axes[0,1], color="teal", edgecolor="white")
+axes[0,1].axhline(df["passengers"].mean(), color="red", linestyle="--", label="Overall mean")
+axes[0,1].set_title("Q7 - Avg Passengers by Hour"); axes[0,1].legend()
+
+# Boxplot by hour
+hours_order = sorted(df["hours"].unique())
+pax_by_hour = [df[df["hours"]==h]["passengers"].values for h in hours_order]
+bp7 = axes[1,0].boxplot(pax_by_hour, positions=hours_order, patch_artist=True, widths=0.6)
+for patch in bp7["boxes"]: patch.set_facecolor("teal")
+axes[1,0].set_title("Q7 - Passengers by Hour (Boxplot)")
+
+axes[1,1].hist(df["passengers"], bins=40, color="teal", edgecolor="white")
+axes[1,1].axvline(df["passengers"].mean(),   color="red",    linestyle="--")
+axes[1,1].axvline(df["passengers"].median(), color="orange", linestyle="--")
+axes[1,1].set_title("Q7 - Histogram of Passengers")
+plt.tight_layout(); plt.savefig("q7_passengers_hours.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Passenger vs.\ duration correlation and visualisations}]
+cor.test(as.numeric(df$hours), df$passengers)
+
+avg_pax <- tapply(df$passengers, df$hours, mean)
+print(round(avg_pax, 1))
+
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+
+plot(df$hours, df$passengers, pch=16, cex=0.3, col="teal",
+     xlab="Flight Hours", ylab="Passengers",
+     main=paste0("Q7 - Passengers vs Hours (r=",
+                 round(cor(df$hours,df$passengers),3),")"))
+abline(lm(passengers ~ hours, data=df), col="black", lwd=2)
+
+barplot(avg_pax, col="teal", xlab="Hours", ylab="Avg Passengers",
+        main="Q7 - Avg Passengers by Hour")
+abline(h=mean(df$passengers), col="red", lty=2)
+
+boxplot(passengers ~ hours, data=df, col="teal",
+        xlab="Flight Hours", ylab="Passengers",
+        main="Q7 - Passengers by Hour (Boxplot)")
+
+hist(df$passengers, breaks=40, col="teal", border="white",
+     main="Q7 - Histogram of Passengers", xlab="Passengers")
+par(mfrow = c(1, 1))
+\end{lstlisting}
+
+\section{Visualisations}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q7_passengers_hours.png}
+  \caption{Q7 — Passengers vs.\ Duration: Scatter, Bar, Boxplot, and Histogram}
+\end{figure}
+
+\section{Interpretation}
+
+\begin{interpretation}
+Pearson $r = -0.011$ ($p = 0.273$) — essentially \textbf{no relationship} between flight duration and passenger count. Average passengers remain stable at \stat{207--208} across all flight durations.
+
+\textbf{Conclusion:} Airlines fill their aircraft consistently regardless of flight length. Route type does not strongly predict capacity utilisation in this dataset.
+\end{interpretation}
+
+% ============================================================
+\chapter{Q8 — Weekend vs.\ Weekday Pricing}
+% ============================================================
+
+\textit{What is the relationship between coach and first-class prices on weekends compared to weekdays?}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccc}
+\thead{Class} & \thead{Weekend} & \thead{Weekday} & \thead{Difference} & \thead{p-value} \\
+\talt Coach       & \$405.51 & \$323.05 & +\$82.47 & $<0.001$ \\
+\trow First-Class & \$1,558.32 & \$1,257.89 & +\$300.43 & $<0.001$ \\
+\end{tabular}
+\caption{Price comparison: weekend vs.\ weekday}
+\end{table}
+
+\section{Code}
+
+\begin{lstlisting}[style=python, caption={Python — Weekend vs.\ weekday t-tests and visualisations}]
+for pc in ["coach_price","firstclass_price"]:
+    wk  = df[df["weekend"]=="Yes"][pc]
+    nwk = df[df["weekend"]=="No" ][pc]
+    t, p = stats.ttest_ind(wk, nwk)
+    print(f"{pc}: Weekend=${wk.mean():.2f}  Weekday=${nwk.mean():.2f}  "
+          f"Diff=${wk.mean()-nwk.mean():.2f}  p={p:.4f}")
+
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+for i, (pc, col) in enumerate(zip(["coach_price","firstclass_price"],
+                                   ["steelblue","mediumpurple"])):
+    bp = axes[0,i].boxplot(
+        [df[df["weekend"]=="Yes"][pc].values, df[df["weekend"]=="No"][pc].values],
+        labels=["Weekend","Weekday"], patch_artist=True)
+    for patch in bp["boxes"]: patch.set_facecolor(col)
+    axes[0,i].set_title(f"Q8 - {pc.replace('_',' ').title()}")
+
+# Violin: coach by weekend
+vp = axes[1,0].violinplot(
+    [df[df["weekend"]=="Yes"]["coach_price"].values,
+     df[df["weekend"]=="No" ]["coach_price"].values],
+    positions=[1,2], showmedians=True)
+for j,b in enumerate(vp["bodies"]): b.set_facecolor(["coral","steelblue"][j])
+axes[1,0].set_xticks([1,2]); axes[1,0].set_xticklabels(["Weekend","Weekday"])
+axes[1,0].set_title("Q8 - Violin: Coach by Weekend")
+
+# Bar: mean prices for both classes
+cats  = ["Coach\nWeekend","Coach\nWeekday","FC\nWeekend","FC\nWeekday"]
+means = [df[df["weekend"]=="Yes"]["coach_price"].mean(),
+         df[df["weekend"]=="No" ]["coach_price"].mean(),
+         df[df["weekend"]=="Yes"]["firstclass_price"].mean(),
+         df[df["weekend"]=="No" ]["firstclass_price"].mean()]
+bars = axes[1,1].bar(cats, means, color=["coral","steelblue","darkorchid","mediumpurple"])
+for bar,val in zip(bars,means):
+    axes[1,1].text(bar.get_x()+bar.get_width()/2, val+15, f"${val:,.0f}",
+                   ha="center", fontsize=9, fontweight="bold")
+plt.tight_layout(); plt.savefig("q8_weekend_weekday.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Weekend vs.\ weekday t-tests and visualisations}]
+for (pc in c("coach_price","firstclass_price")) {
+  wk  <- df[df$weekend=="Yes", pc]
+  nwk <- df[df$weekend=="No",  pc]
+  tt  <- t.test(wk, nwk)
+  cat(pc, round(mean(wk)-mean(nwk),2), round(tt$p.value,4), "\n")
+}
+
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+
+boxplot(coach_price ~ weekend, data=df, col=c("lightcoral","steelblue"),
+        main="Q8 - Coach: Weekend vs Weekday", ylab="Coach Price ($)")
+boxplot(firstclass_price ~ weekend, data=df, col=c("darkorchid","mediumpurple"),
+        main="Q8 - First-Class: Weekend vs Weekday", ylab="First-Class Price ($)")
+
+if (!require("vioplot")) install.packages("vioplot"); library(vioplot)
+vioplot(df[df$weekend=="Yes","coach_price"], df[df$weekend=="No","coach_price"],
+        names=c("Weekend","Weekday"), col=c("coral","steelblue"),
+        main="Q8 - Violin: Coach by Weekend")
+
+means <- c(mean(df[df$weekend=="Yes","coach_price"]),
+           mean(df[df$weekend=="No", "coach_price"]),
+           mean(df[df$weekend=="Yes","firstclass_price"]),
+           mean(df[df$weekend=="No", "firstclass_price"]))
+barplot(means, names.arg=c("Coach\nWknd","Coach\nWkdy","FC\nWknd","FC\nWkdy"),
+        col=c("coral","steelblue","darkorchid","mediumpurple"),
+        main="Q8 - Mean Prices by Class & Weekend", ylab="Avg Price ($)")
+par(mfrow = c(1, 1))
+\end{lstlisting}
+
+\section{Visualisations}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q8_weekend_weekday.png}
+  \caption{Q8 — Weekend vs.\ Weekday: Boxplots, Violin, and Mean Price Bar}
+\end{figure}
+
+\section{Interpretation}
+
+\begin{interpretation}
+Both coach and first-class prices are \textbf{significantly higher on weekends} ($p < 0.001$). Coach fares rise by \stat{+\$82.47} on weekends; first-class fares by \stat{+\$300.43}.
+
+\textbf{Conclusion:} Demand-based pricing is clearly at work. Travellers seeking lower fares should fly on weekdays.
+\end{interpretation}
+
+% ============================================================
+\chapter{Q9 — Coach Prices: Redeye vs.\ Non-Redeye by Day}
+% ============================================================
+
+\textit{How do coach prices differ for redeyes and non-redeyes on each day of the week?}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lccc}
+\thead{Day} & \thead{Non-Redeye} & \thead{Redeye} & \thead{Discount} \\
+\talt Monday    & \$325.53 & \$257.30 & $-$\$68.23 \\
+\trow Tuesday   & \$328.16 & \$272.33 & $-$\$55.83 \\
+\talt Wednesday & \$327.52 & \$260.95 & $-$\$66.57 \\
+\trow Thursday  & \$323.92 & \$265.93 & $-$\$57.99 \\
+\talt Friday    & \$405.15 & \$344.37 & $-$\$60.78 \\
+\trow Saturday  & \$414.04 & \$358.88 & $-$\$55.16 \\
+\talt Sunday    & \$404.67 & \$343.07 & $-$\$61.60 \\
+\end{tabular}
+\caption{Average coach price by day of week and redeye status}
+\end{table}
+
+\section{Code}
+
+\begin{lstlisting}[style=python, caption={Python — Pivot table and grouped bar/line/heatmap charts}]
+import seaborn as sns
+
+days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+pivot = df.pivot_table(values="coach_price", index="day_of_week",
+                       columns="redeye", aggfunc="mean").reindex(days)
+print(pivot.round(2))
+
+fig, axes = plt.subplots(2, 2, figsize=(16, 10))
+
+# Grouped bar
+x  = np.arange(len(days)); w = 0.35
+axes[0,0].bar(x-w/2, pivot["No"].values,  w, label="Non-Redeye", color="steelblue")
+axes[0,0].bar(x+w/2, pivot["Yes"].values, w, label="Redeye",     color="tomato")
+axes[0,0].set_xticks(x); axes[0,0].set_xticklabels([d[:3] for d in days])
+axes[0,0].set_title("Q9 - Redeye vs Non-Redeye (Bar)"); axes[0,0].legend()
+
+# Line chart
+axes[0,1].plot(days, pivot["No"].values,  "o-",  color="steelblue", label="Non-Redeye")
+axes[0,1].plot(days, pivot["Yes"].values, "s--", color="tomato",    label="Redeye")
+axes[0,1].fill_between(range(len(days)), pivot["Yes"].values,
+                        pivot["No"].values, alpha=0.15, color="gray")
+axes[0,1].set_xticks(range(len(days))); axes[0,1].set_xticklabels([d[:3] for d in days])
+axes[0,1].set_title("Q9 - Price Trend (Line)"); axes[0,1].legend()
+
+# Heatmap
+sns.heatmap(pivot.T, annot=True, fmt=".0f", cmap="RdYlGn_r",
+            ax=axes[1,0], xticklabels=[d[:3] for d in days])
+axes[1,0].set_title("Q9 - Heatmap: Price by Day & Redeye")
+
+# Discount bar
+discounts = pivot["No"].values - pivot["Yes"].values
+axes[1,1].bar([d[:3] for d in days], discounts, color="darkred", edgecolor="white")
+axes[1,1].set_title("Q9 - Redeye Discount by Day")
+plt.tight_layout(); plt.savefig("q9_redeye_by_day.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Pivot table and grouped bar/heatmap for redeye by day}]
+library(reshape2); library(ggplot2)
+
+day_ord <- c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")
+
+pivot <- tapply(df$coach_price, list(df$day_of_week, df$redeye), mean)
+pivot <- pivot[day_ord, ]
+print(round(pivot, 2))
+
+# Grouped bar via ggplot2
+melt_df <- melt(pivot)
+colnames(melt_df) <- c("Day","Redeye","AvgPrice")
+ggplot(melt_df, aes(Day, AvgPrice, fill=Redeye)) +
+  geom_bar(stat="identity", position="dodge") +
+  scale_fill_manual(values=c("No"="steelblue","Yes"="tomato")) +
+  labs(title="Q9 - Coach Price: Redeye vs Non-Redeye", y="Avg Coach Price ($)") +
+  theme_minimal() +
+  theme(axis.text.x=element_text(angle=30, hjust=1))
+
+# Discount bar
+discounts <- pivot[,"No"] - pivot[,"Yes"]
+barplot(discounts, col="darkred", main="Q9 - Redeye Discount by Day",
+        ylab="Price Discount ($)", las=2)
+
+# Heatmap via ggplot
+ggplot(melt_df, aes(Day, Redeye, fill=AvgPrice)) +
+  geom_tile(color="white") +
+  geom_text(aes(label=round(AvgPrice,0)), size=3.5) +
+  scale_fill_gradient2(low="green", mid="yellow", high="red", midpoint=340) +
+  labs(title="Q9 - Heatmap: Coach Price by Day & Redeye") +
+  theme_minimal() + theme(axis.text.x=element_text(angle=30, hjust=1))
+\end{lstlisting}
+
+\section{Visualisations}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q9_redeye_by_day.png}
+  \caption{Q9 — Redeye vs.\ Non-Redeye: Grouped Bar, Line, Heatmap, and Discount Bar}
+\end{figure}
+
+\section{Interpretation}
+
+\begin{interpretation}
+Non-redeye flights are \textbf{consistently more expensive} than redeye flights on every day of the week, with discounts ranging from \stat{\$55--\$68}. Weekend prices are highest for both flight types, with Saturday peaking.
+
+\textbf{Conclusion:} The cheapest coach option is a weekday redeye (Monday or Wednesday). Friday--Sunday redeye flights are more expensive than weekday non-redeye flights due to demand.
+\end{interpretation}
+
+% ============================================================
+\chapter{Q10 — Comprehensive Statistical Analysis}
+% ============================================================
+
+\section{Q10a — Summary Statistics}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccccc}
+\thead{Variable} & \thead{Mean} & \thead{Median} & \thead{Std Dev} & \thead{Min} & \thead{Max} & \thead{Skewness} \\
+\talt miles            & 1983.9 & 1968.0 & 934.9  & 178   & 4,479  & 0.087 \\
+\trow passengers       & 207.7  & 210.0  & 12.84  & 139   & 239    & $-$0.634 \\
+\talt delay (min)      & 13.61  & 10.00  & 47.76  & 0     & 1,524  & 19.87 \\
+\trow coach\_price (\$) & 376.30 & 380.50 & 66.65  & 84.50 & 565.21 & $-$0.342 \\
+\talt firstclass (\$)  & 1451.9 & 1499.5 & 162.8  & 990.0 & 1817.5 & $-$0.445 \\
+\trow hours            & 3.53   & 4.00   & 1.72   & 1     & 8      & 0.202 \\
+\end{tabular}
+\caption{Summary statistics for all numeric variables}
+\end{table}
+
+\begin{lstlisting}[style=python, caption={Python — Comprehensive summary statistics}]
+numeric_cols = ["miles","passengers","delay","coach_price","firstclass_price","hours"]
+summary = df[numeric_cols].agg(["mean","median","std","min","max",
+                                lambda x: x.skew(),
+                                lambda x: x.kurtosis()]).round(3)
+summary.index = ["mean","median","std","min","max","skewness","kurtosis"]
+print(summary.to_string())
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Comprehensive summary statistics}]
+library(psych)
+num_cols <- c("miles","passengers","delay","coach_price","firstclass_price","hours")
+describe(df[num_cols])
+\end{lstlisting}
+
+\section{Q10b — Visualisations}
+
+\begin{lstlisting}[style=python, caption={Python — Histograms, boxplots, bar charts, and KDE plots}]
+hist_colors = ["steelblue","darkorange","tomato","seagreen","mediumpurple","teal"]
+
+# Histograms
+fig, axes = plt.subplots(2, 3, figsize=(16, 8))
+for ax, col, c in zip(axes.flat, numeric_cols, hist_colors):
+    ax.hist(df[col], bins=35, color=c, edgecolor="white", alpha=0.85)
+    ax.axvline(df[col].mean(),   color="red",    linestyle="--", label="Mean")
+    ax.axvline(df[col].median(), color="orange", linestyle=":",  label="Median")
+    ax.set_title(f"Histogram - {col}"); ax.legend(fontsize=7)
+plt.savefig("q10b_histograms.png", dpi=150)
+
+# Boxplots
+fig, axes = plt.subplots(2, 3, figsize=(16, 8))
+for ax, col, c in zip(axes.flat, numeric_cols, hist_colors):
+    ax.boxplot(df[col], patch_artist=True, boxprops=dict(facecolor=c, alpha=0.7),
+               medianprops=dict(color="black", linewidth=2))
+    ax.set_title(f"Boxplot - {col}")
+plt.savefig("q10b_boxplots.png", dpi=150)
+
+# Bar charts (categorical)
+cat_cols = ["inflight_meal","inflight_entertainment","inflight_wifi",
+            "redeye","weekend","day_of_week"]
+fig, axes = plt.subplots(2, 3, figsize=(16, 8))
+for ax, col in zip(axes.flat, cat_cols):
+    counts = df[col].value_counts()
+    ax.bar(counts.index, counts.values, color="darkorange", edgecolor="white")
+    ax.set_title(f"Bar Chart - {col}"); ax.tick_params(axis="x", rotation=30)
+plt.savefig("q10b_barcharts.png", dpi=150)
+
+# KDE plots
+fig, axes = plt.subplots(2, 3, figsize=(16, 8))
+for ax, col, c in zip(axes.flat, numeric_cols, hist_colors):
+    df[col].plot.kde(ax=ax, color=c, linewidth=2)
+    ax.set_title(f"KDE - {col}")
+plt.savefig("q10b_kde.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Histograms, boxplots, and bar charts}]
+num_cols <- c("miles","passengers","delay","coach_price","firstclass_price","hours")
+colors   <- c("steelblue","darkorange","tomato","seagreen","mediumpurple","teal")
+
+# Histograms
+par(mfrow=c(2,3), mar=c(4,4,3,1))
+for (i in seq_along(num_cols)) {
+  hist(df[[num_cols[i]]], breaks=35, col=colors[i], border="white",
+       main=paste("Hist -",num_cols[i]), xlab=num_cols[i])
+  abline(v=mean(df[[num_cols[i]]],na.rm=T),   col="red",    lty=2)
+  abline(v=median(df[[num_cols[i]]],na.rm=T), col="orange", lty=3)
+}
+
+# Boxplots
+par(mfrow=c(2,3), mar=c(4,4,3,1))
+for (i in seq_along(num_cols)) {
+  boxplot(df[[num_cols[i]]], col=colors[i],
+          main=paste("Box -",num_cols[i]), ylab=num_cols[i])
+}
+
+# Bar charts (categorical)
+cat_cols <- c("inflight_meal","inflight_entertainment","inflight_wifi",
+              "redeye","weekend","day_of_week")
+par(mfrow=c(2,3), mar=c(5,4,3,1))
+for (col in cat_cols) {
+  barplot(table(df[[col]]), col="darkorange", main=col, las=2)
+}
+par(mfrow=c(1,1))
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q10b_histograms.png}
+  \caption{Q10b — Histograms of all numeric variables with mean and median lines}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q10b_boxplots.png}
+  \caption{Q10b — Boxplots of all numeric variables}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q10b_barcharts.png}
+  \caption{Q10b — Bar charts of all categorical variables}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q10b_kde.png}
+  \caption{Q10b — KDE density plots of all numeric variables}
+\end{figure}
+
+\section{Q10c — Hypothesis Testing}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccc}
+\thead{Test} & \thead{Statistic} & \thead{p-value} & \thead{Decision} \\
+\talt Z-test ($H_0$: $\mu = \$350$)     & $z = 39.46$ & $< 0.001$ & Reject $H_0$ \\
+\trow t-test ($H_0$: $\mu = \$380$)     & $t = -5.55$ & $< 0.001$ & Reject $H_0$ \\
+\talt Chi-sq: redeye $\times$ meal      & $\chi^2 = 4.34$  & 0.0372  & Reject $H_0$ (dependent) \\
+\trow Chi-sq: redeye $\times$ weekend   & $\chi^2 = 0.021$ & 0.885   & Fail to reject \\
+\end{tabular}
+\caption{Hypothesis test results}
+\end{table}
+
+\begin{lstlisting}[style=python, caption={Python — Z-test, one-sample t-test, and chi-square tests}]
+from scipy.stats import norm
+import pandas as pd
+
+cp = df["coach_price"]
+
+# Z-test (H0: mu = $350)
+z = (cp.mean() - 350) / (cp.std() / np.sqrt(len(cp)))
+p_z = 2 * (1 - norm.cdf(abs(z)))
+print(f"Z-test: z={z:.4f}  p={p_z:.4e}")
+
+# One-sample t-test (H0: mu = $380)
+t, p_t = stats.ttest_1samp(cp, 380)
+print(f"t-test: t={t:.4f}  p={p_t:.4e}")
+
+# Chi-square tests
+for a, b in [("redeye","inflight_meal"), ("redeye","weekend")]:
+    ct = pd.crosstab(df[a], df[b])
+    chi2, p_chi, dof, _ = stats.chi2_contingency(ct)
+    print(f"Chi-sq {a}x{b}: chi2={chi2:.4f}  p={p_chi:.4f}")
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Z-test, one-sample t-test, and chi-square tests}]
+cp <- df$coach_price
+
+# Z-test (H0: mu = $350)
+z   <- (mean(cp)-350) / (sd(cp)/sqrt(length(cp)))
+p_z <- 2 * pnorm(-abs(z))
+cat("Z-test: z=", round(z,4), "  p=", p_z, "\n")
+
+# One-sample t-test (H0: mu = $380)
+t.test(cp, mu=380)
+
+# Chi-square tests
+chisq.test(table(df$redeye, df$inflight_meal))
+chisq.test(table(df$redeye, df$weekend))
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q10c_hypothesis_tests.png}
+  \caption{Q10c — Z-distribution with rejection region and contingency heatmaps}
+\end{figure}
+
+\section{Q10d — Independent t-Tests}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lcccc}
+\thead{Comparison} & \thead{Yes} & \thead{No} & \thead{t-stat} & \thead{p-value} \\
+\talt Weekend vs.\ Weekday    & \$405.49 & \$323.47 & 73.41  & $<0.001$ \\
+\trow Redeye vs.\ Non-Redeye  & \$319.22 & \$379.47 & $-20.58$ & $<0.001$ \\
+\talt Meal vs.\ No Meal        & \$389.64 & \$370.51 & 13.36  & $<0.001$ \\
+\trow Entertainment vs.\ None  & \$389.34 & \$322.30 & 35.20  & $<0.001$ \\
+\talt WiFi vs.\ No WiFi        & \$382.81 & \$314.79 & 40.11  & $<0.001$ \\
+\end{tabular}
+\caption{Independent t-test results for coach price group comparisons}
+\end{table}
+
+\begin{lstlisting}[style=python, caption={Python — Independent t-tests for all group comparisons}]
+groups = [
+    ("weekend",               "coach_price", "Weekend"),
+    ("redeye",                "coach_price", "Redeye"),
+    ("inflight_meal",         "coach_price", "Meal"),
+    ("inflight_entertainment","coach_price", "Entertainment"),
+    ("inflight_wifi",         "coach_price", "WiFi"),
+]
+for col, target, label in groups:
+    g1 = df[df[col]=="Yes"][target]
+    g2 = df[df[col]=="No" ][target]
+    t, p = stats.ttest_ind(g1, g2)
+    print(f"{label}: Yes=${g1.mean():.2f}  No=${g2.mean():.2f}  t={t:.3f}  p={p:.4f}")
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Independent t-tests for group mean comparisons}]
+groups <- list(
+  c("weekend","Weekend"), c("redeye","Redeye"),
+  c("inflight_meal","Meal"), c("inflight_entertainment","Entertainment"),
+  c("inflight_wifi","WiFi"))
+for (g in groups) {
+  g1 <- df[df[[g[1]]]=="Yes","coach_price"]
+  g2 <- df[df[[g[1]]]=="No", "coach_price"]
+  tt <- t.test(g1, g2)
+  cat(g[2], round(mean(g1),2), round(mean(g2),2),
+      round(tt$statistic,3), round(tt$p.value,4), "\n")
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{q10d_ttest_forest.png}
+  \caption{Q10d — Forest plot: mean coach price difference (Yes $-$ No) per group}
+\end{figure}
+
+\section{Q10e — Price Differences: Weekend vs.\ Weekday}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lccc}
+\thead{Price Class} & \thead{Weekend} & \thead{Weekday} & \thead{Difference} \\
+\talt Coach       & \$405.51   & \$323.47   & +\$82.47 \\
+\trow First-Class & \$1,558.32 & \$1,257.89 & +\$300.43 \\
+\end{tabular}
+\caption{Weekend vs.\ weekday average price differences}
+\end{table}
+
+\section{Q10f — Correlation Matrix}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\small
+\begin{tabular}{lcccccc}
+\thead{} & \thead{miles} & \thead{pax} & \thead{delay} & \thead{coach} & \thead{first} & \thead{hours} \\
+\talt miles       & 1.000 & $-0.012$ & $-0.007$ & 0.340 & 0.288 & 0.985 \\
+\trow passengers  & $-0.012$ & 1.000 & 0.005 & 0.160 & 0.007 & $-0.011$ \\
+\talt delay       & $-0.007$ & 0.005 & 1.000 & $-0.017$ & $-0.027$ & $-0.007$ \\
+\trow coach       & 0.340 & 0.160 & $-0.017$ & 1.000 & 0.758 & 0.332 \\
+\talt firstclass  & 0.288 & 0.007 & $-0.027$ & 0.758 & 1.000 & 0.284 \\
+\trow hours       & 0.985 & $-0.011$ & $-0.007$ & 0.332 & 0.284 & 1.000 \\
+\end{tabular}
+\caption{Pearson correlation matrix for numeric variables}
+\end{table}
+
+\begin{lstlisting}[style=python, caption={Python — Correlation matrix and heatmap}]
+import seaborn as sns
+
+corr = df[numeric_cols].corr()
+print(corr.round(4).to_string())
+
+fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm",
+            ax=axes[0], linewidths=0.5, vmin=-1, vmax=1)
+mask = np.triu(np.ones_like(corr, dtype=bool))
+sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm",
+            mask=mask, ax=axes[1], linewidths=0.5, vmin=-1, vmax=1)
+plt.savefig("q10f_correlation.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Correlation matrix and corrplot heatmap}]
+library(corrplot)
+num_cols <- c("miles","passengers","delay","coach_price","firstclass_price","hours")
+cor_mat  <- cor(df[num_cols], use="complete.obs")
+print(round(cor_mat, 4))
+
+corrplot(cor_mat, method="color", type="upper",
+         addCoef.col="black", tl.cex=0.9,
+         title="Q10f - Correlation Heatmap", mar=c(0,0,1,0))
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q10f_correlation.png}
+  \caption{Q10f — Full and upper-triangle correlation heatmaps}
+\end{figure}
+
+\section{Q10g — Linear Regression: Predict Coach Price}
+
+\textbf{Model:}
+
+\begin{align}
+\text{coach\_price} &= \beta_0 + \beta_1(\text{miles})
++ \beta_2(\text{passengers}) \\
+&\quad + \beta_3(\text{delay})
++ \beta_4(\text{hours}) \\
+&\quad + \beta_5(\text{meal})
++ \beta_6(\text{entertainment}) \\
+&\quad + \beta_7(\text{wifi}) + \varepsilon
+\end{align}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lccccc}
+\thead{Predictor} & \thead{Coefficient} & \thead{Std.\ Error} & \thead{t-value} & \thead{p-value} & \thead{Sig.} \\
+\talt (Intercept)          & \$26.00  & 8.49  & 3.063  & 0.002   & ** \\
+\trow miles                & \$0.027  & 0.003 & 8.575  & $<0.001$& *** \\
+\talt passengers           & \$0.839  & 0.039 & 21.271 & $<0.001$& *** \\
+\trow delay                & $-$\$0.023 & 0.017 & $-1.370$ & 0.171 & n.s. \\
+\talt hours                & $-$\$1.206 & 1.711 & $-0.705$ & 0.481 & n.s. \\
+\trow inflight\_meal       & \$18.47  & 1.105 & 16.721 & $<0.001$& *** \\
+\talt inflight\_entertain. & \$71.06  & 1.276 & 55.671 & $<0.001$& *** \\
+\trow inflight\_wifi       & \$71.57  & 1.670 & 42.868 & $<0.001$& *** \\
+\end{tabular}
+\caption{OLS regression coefficients — dependent: \texttt{coach\_price}}
+\end{table}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lc}
+\thead{Metric} & \thead{Value} \\
+\talt $R^2$              & 0.4364 \\
+\trow Adjusted $R^2$     & 0.4360 \\
+\talt F-statistic        & 1,105.2 \\
+\trow Model p-value      & $< 2.2 \times 10^{-16}$ \\
+\end{tabular}
+\caption{OLS model fit statistics}
+\end{table}
+
+\begin{lstlisting}[style=python, caption={Python — OLS linear regression and diagnostic plots}]
+import statsmodels.api as sm
+
+# Encode binary features
+enc = df.copy()
+for f in ["inflight_meal","inflight_entertainment","inflight_wifi","redeye","weekend"]:
+    enc[f] = (enc[f]=="Yes").astype(int)
+
+preds = ["miles","passengers","delay","hours",
+         "inflight_meal","inflight_entertainment","inflight_wifi"]
+X = sm.add_constant(enc[preds])
+y = enc["coach_price"]
+lm = sm.OLS(y, X).fit()
+print(lm.summary())
+
+# Diagnostic plots
+y_pred = lm.fittedvalues; resid  = lm.resid
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+axes[0,0].scatter(y, y_pred, alpha=0.1, s=5, color="steelblue")
+lims = [min(y.min(), y_pred.min()), max(y.max(), y_pred.max())]
+axes[0,0].plot(lims, lims, "r--", linewidth=2)
+axes[0,0].set_title(f"Predicted vs Actual (R2={lm.rsquared:.3f})")
+
+axes[0,1].scatter(y_pred, resid, alpha=0.1, s=5, color="tomato")
+axes[0,1].axhline(0, color="black", linestyle="--")
+axes[0,1].set_title("Residuals vs Fitted")
+
+axes[1,0].hist(resid, bins=50, color="tomato", edgecolor="white")
+axes[1,0].set_title("Histogram of Residuals")
+
+coef = pd.DataFrame({"coef":lm.params,"lo":lm.conf_int()[0],"hi":lm.conf_int()[1]}).drop("const")
+coef = coef.sort_values("coef")
+axes[1,1].barh(coef.index, coef["coef"],
+               xerr=[coef["coef"]-coef["lo"], coef["hi"]-coef["coef"]],
+               color=["steelblue" if c>0 else "tomato" for c in coef["coef"]])
+axes[1,1].axvline(0, color="black")
+axes[1,1].set_title("Regression Coefficients with 95% CI")
+plt.tight_layout(); plt.savefig("q10g_linear_regression.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — OLS linear regression}]
+df_enc <- df
+df_enc$inflight_meal          <- ifelse(df$inflight_meal=="Yes",1,0)
+df_enc$inflight_entertainment <- ifelse(df$inflight_entertainment=="Yes",1,0)
+df_enc$inflight_wifi          <- ifelse(df$inflight_wifi=="Yes",1,0)
+
+lm_mod <- lm(coach_price ~ miles + passengers + delay + hours +
+               inflight_meal + inflight_entertainment + inflight_wifi,
+             data=df_enc)
+summary(lm_mod)
+
+# Diagnostic plots
+par(mfrow=c(2,2))
+plot(lm_mod)
+par(mfrow=c(1,1))
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q10g_linear_regression.png}
+  \caption{Q10g — OLS regression: predicted vs.\ actual, residuals, histogram, and coefficient plot}
+\end{figure}
+
+\begin{interpretation}
+$R^2 = 0.4364$ — the model explains \stat{43.6\%} of variance in coach price. Strongest predictors: \stat{WiFi (+\$71.57)}, \stat{Entertainment (+\$71.06)}, \stat{passengers (+\$0.84/pax)}, \stat{meal (+\$18.47)}, \stat{miles (+\$0.027/mile)}. Delay and hours are not individually significant (multicollinearity with miles).
+\end{interpretation}
+
+\section{Q10h — Logistic Regression: Predict Redeye}
+
+\textbf{Model:} Binary logistic regression predicting $P(\text{redeye}=1)$ from: \texttt{coach\_price}, \texttt{miles}, \texttt{hours}, \texttt{passengers}, \texttt{delay}.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lccccc}
+\thead{Predictor} & \thead{Coefficient} & \thead{Std.\ Error} & \thead{z-value} & \thead{p-value} & \thead{Sig.} \\
+\talt (Intercept) & 207.89  & 58.02 &  3.583 & 0.0003 & *** \\
+\trow coach\_price & $-0.048$ & 0.017 & $-2.910$ & 0.004  & ** \\
+\talt miles       & 0.004   & 0.004 &  0.948 & 0.343  & n.s. \\
+\trow hours       & $-0.850$ & 2.007 & $-0.423$ & 0.672  & n.s. \\
+\talt passengers  & $-1.072$ & 0.298 & $-3.603$ & 0.0003 & *** \\
+\trow delay       & 0.008   & 0.010 &  0.809 & 0.418  & n.s. \\
+\end{tabular}
+\caption{Logistic regression — dependent: \texttt{redeye} (1 = Yes, 0 = No)}
+\end{table}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lc}
+\thead{Metric} & \thead{Value} \\
+\talt McFadden Pseudo $R^2$ & 0.9914 \\
+\trow AIC                   & 33.82 \\
+\talt Accuracy              & 99.96\% \\
+\end{tabular}
+\caption{Logistic model fit metrics}
+\end{table}
+
+\begin{lstlisting}[style=python, caption={Python — Logistic regression and evaluation}]
+enc["redeye_binary"] = (df["redeye"]=="Yes").astype(int)
+
+X_log = sm.add_constant(enc[["coach_price","miles","hours","passengers","delay"]])
+y_log = enc["redeye_binary"]
+logit = sm.Logit(y_log, X_log).fit(disp=False)
+print(logit.summary())
+
+pred_prob = logit.predict(X_log)
+pred_cls  = (pred_prob >= 0.5).astype(int)
+acc = (pred_cls == y_log).mean()
+print(f"Accuracy: {acc*100:.2f}%")
+
+from sklearn.metrics import confusion_matrix
+fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+
+# Predicted probability histogram
+axes[0].hist(pred_prob[y_log==0], bins=30, alpha=0.7, color="steelblue",
+             label="Non-Redeye")
+axes[0].hist(pred_prob[y_log==1], bins=30, alpha=0.7, color="tomato",
+             label="Redeye")
+axes[0].axvline(0.5, color="black", linestyle="--"); axes[0].legend()
+
+# Confusion matrix
+cm = confusion_matrix(y_log, pred_cls)
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", ax=axes[1],
+            xticklabels=["Pred:No","Pred:Yes"],
+            yticklabels=["Act:No","Act:Yes"])
+axes[1].set_title(f"Confusion Matrix (Acc={acc*100:.2f}%)")
+
+# Log-odds bar
+log_coef = logit.params.drop("const")
+axes[2].barh(log_coef.index, log_coef.values,
+             color=["steelblue" if c>0 else "tomato" for c in log_coef.values])
+axes[2].axvline(0, color="black"); axes[2].set_title("Log-Odds Coefficients")
+plt.tight_layout(); plt.savefig("q10h_logistic_regression.png", dpi=150)
+\end{lstlisting}
+
+\begin{lstlisting}[style=Rcode, caption={R — Logistic regression and evaluation}]
+df_enc$redeye_bin <- ifelse(df$redeye=="Yes", 1, 0)
+
+logit_mod <- glm(redeye_bin ~ coach_price + miles + hours + passengers + delay,
+                 data=df_enc, family=binomial)
+summary(logit_mod)
+
+# Classification accuracy
+pred    <- ifelse(predict(logit_mod, type="response") >= 0.5, 1, 0)
+acc     <- mean(pred == df_enc$redeye_bin) * 100
+cat("Accuracy:", round(acc,2), "%\n")
+
+# Pseudo R-squared (McFadden)
+library(pscl)
+pR2(logit_mod)
+
+# Confusion matrix
+table(Predicted=pred, Actual=df_enc$redeye_bin)
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{q10h_logistic_regression.png}
+  \caption{Q10h — Logistic regression: predicted probabilities, confusion matrix, and log-odds coefficients}
+\end{figure}
+
+\begin{interpretation}
+Classification accuracy of \stat{99.96\%}. Significant predictors: \textbf{coach\_price} (negative — cheaper fares predict redeye) and \textbf{passengers} (negative — fewer passengers predict redeye). Near-perfect separation confirms that redeye flights occupy a structurally distinct pricing tier.
+\end{interpretation}
+
+% ============================================================
+\chapter{Conclusions}
+% ============================================================
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\textwidth}{>{\bfseries}l X}
+\thead{Question} & \thead{Key Finding} \\
+\talt Q1: Price overview       & \$500 is above average; only 1.7\% of fares exceed it. Mean $\approx$ \$376. \\
+\trow Q2: 8-hr flights         & \$500 more reasonable for 8-hr flights (14.8\% exceed \$500). \\
+\talt Q3: Delay distribution   & Right-skewed; 17.1\% pose connection risk; severe delays rare ($<$0.1\%). \\
+\trow Q4: Correlations         & Miles ($r=0.345$) and hours ($r=0.343$) are top numeric predictors. \\
+\talt Q5: Coach vs. first-class & Very strong $r=0.756$; first-class costs $\approx 3.93\times$ coach. \\
+\trow Q6: In-flight features    & WiFi (+\$68) and entertainment (+\$67) are the biggest price drivers. \\
+\talt Q7: Passengers vs. hours  & No significant relationship ($r=-0.011$, $p=0.273$). \\
+\trow Q8: Weekend vs. weekday   & Weekend coach +\$82; first-class +\$300. Both highly significant. \\
+\talt Q9: Redeye by day        & Redeyes consistently \$55--\$68 cheaper every day of the week. \\
+\trow Q10: Regression          & $R^2=0.44$; WiFi, entertainment, and passengers are the top drivers. \\
+\end{tabularx}
+\caption{Summary of key findings across all research questions}
+\end{table}
+
+\vspace{1em}
+\begin{tcolorbox}[
+  enhanced, colback=themeBlue!8, colframe=themeBlue,
+  title={\textbf{Overall Conclusions}},
+  fonttitle=\color{white}, coltitle=white,
+  attach boxed title to top left={yshift=-2mm, xshift=4mm},
+  boxed title style={colback=themeBlue}
+]
+Coach pricing is most strongly driven by \textbf{in-flight service features} (WiFi and entertainment), \textbf{route demand} (passengers and distance), and \textbf{scheduling factors} (weekend and redeye status). Airlines apply clear demand-based pricing. Off-peak (weekday, redeye) travel consistently offers the lowest fares.
+
+\medskip
+\textbf{Best budget strategy:} Book a weekday redeye flight on Monday or Wednesday on routes with no WiFi or entertainment included.
+\end{tcolorbox}
+
+\end{document}
