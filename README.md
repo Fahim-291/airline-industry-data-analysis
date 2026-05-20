@@ -42,11 +42,13 @@ Using Python and R, the study explores relationships between ticket pricing and 
 ## 📂 Repository Structure
 
 ```bash
+├── Airline_Analysis.py
+├── Airline_Analysis.R
+├── Airline_Analysis.tex
 ├── main.ipynb
 ├── Airline_Analysis.pdf
 ├── Airline_Analysis.docx
-├── Airline_Analysis.py
-├── Airline_Analysis.R
+├── Airline_Analysis[Latex].pdf
 ├── Resources/
 │   └── flight_data.csv
 ├── Images/
